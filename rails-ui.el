@@ -386,7 +386,7 @@
 (put 'rails-ui:mode-line-script-string 'risky-local-variable t)
 
 (defcustom rails-ui:show-mode-line
-  't
+  nil
   "Show test and script status in the mode-line"
   :type 'boolean
   :group 'rails
