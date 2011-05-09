@@ -205,7 +205,7 @@ BUFFER-MAJOR-MODE and process-sentinel SENTINEL."
 (defun rails-script:run-destroy (what &rest parameters)
   "Run the destroy script using WHAT and PARAMETERS."
   (rails-script:run rails-ruby-command
-                    (append (list (format "script/destroy %s"  what))
+                    (append (list (format "script/rails destroy %s"  what))
                             parameters
                             rails-script:destroy-params-list)))
 
@@ -249,7 +249,7 @@ BUFFER-MAJOR-MODE and process-sentinel SENTINEL."
 (defun rails-script:run-generate (what &rest parameters)
   "Run the generate script using WHAT and PARAMETERS."
   (rails-script:run rails-ruby-command
-                    (append (list (format "script/generate %s" what))
+                    (append (list (format "script/rails generate %s" what))
                             parameters
                             rails-script:generate-params-list)))
 
@@ -330,7 +330,7 @@ BUFFER-MAJOR-MODE and process-sentinel SENTINEL."
    (rails-minor-mode t)))
 
 (defun rails-script:console (&optional environment)
-  "Run script/console. With prefix arg, prompts for environment."
+  "Run script/rails console. With prefix arg, prompts for environment."
   (interactive (list
                 (and current-prefix-arg
                      (read-buffer "Environment: " rails-default-environment))))
@@ -342,13 +342,13 @@ BUFFER-MAJOR-MODE and process-sentinel SENTINEL."
         (when (fboundp 'inf-ruby-mode) (setq inf-ruby-buffer buffer))
         (switch-to-buffer-other-window buffer))
       (rails-script:run-interactive name
-                                    "script/console"
+                                    "script/rails console"
                                     environment))))
 
 (defun rails-script:breakpointer ()
-  "Run script/breakpointer."
+  "Run script/rails breakpointer."
   (interactive)
-  (rails-script:run-interactive "breakpointer" "script/breakpointer"))
+  (rails-script:run-interactive "breakpointer" "script/rails breakpointer"))
 
 (provide 'rails-scripts)
 
