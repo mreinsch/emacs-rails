@@ -95,8 +95,6 @@ For example -c to remove files from svn.")
     (when win
       (unless do-not-scroll-to-top
         (mapcar #'(lambda(w) (set-window-point w 0)) win))
-      (shrink-window-if-larger-than-buffer
-       (get-buffer-window rails-script:buffer-name))
       (run-hooks 'rails-script:show-buffer-hook))))
 
 (defun rails-script:push-first-button ()
@@ -118,8 +116,6 @@ For example -c to remove files from svn.")
         (progn
           (pop-to-buffer rails-script:buffer-name t t)
           (pop-to-buffer current t t)
-          (shrink-window-if-larger-than-buffer
-           (get-buffer-window rails-script:buffer-name))
           (run-hooks 'rails-script:show-buffer-hook)))
       (message "No output window found. Try running a script or a rake task before."))))
 
@@ -316,21 +312,24 @@ BUFFER-MAJOR-MODE and process-sentinel SENTINEL."
 
 ;;;;;;;;;; Shells ;;;;;;;;;;
 
-(defun rails-script:run-interactive (name script &optional params)
+(defun rails-script:run-interactive (name script &rest params)
   "Run an interactive shell with SCRIPT in a buffer named
 *rails-<project-name>-<name>*."
   (rails-project:with-root
    (root)
-   (let ((buffer-name (format "rails-%s-%s" (rails-project:name) name))
-         (script (rails-core:file script)))
-     (run-ruby-in-buffer buffer-name
-                         script
-                         params)
+   (let ((buffer-name (format "rails-%s-%s" (rails-project:name) name)))
+     (if (file-exists-p (rails-core:file "script/rails"))
+       (apply #'run-ruby-in-buffer buffer-name
+              (rails-core:file "script/rails")
+              (cons script params))
+       (apply #'run-ruby-in-buffer buffer-name
+              (rails-core:file (format "script/%s" script))
+              params))
      (setq ruby-buffer buffer-name))
    (rails-minor-mode t)))
 
 (defun rails-script:console (&optional environment)
-  "Run script/rails console. With prefix arg, prompts for environment."
+  "Run console. With prefix arg, prompts for environment."
   (interactive (list
                 (and current-prefix-arg
                      (read-buffer "Environment: " rails-default-environment))))
@@ -342,13 +341,13 @@ BUFFER-MAJOR-MODE and process-sentinel SENTINEL."
         (when (fboundp 'inf-ruby-mode) (setq inf-ruby-buffer buffer))
         (switch-to-buffer-other-window buffer))
       (rails-script:run-interactive name
-                                    "script/rails console"
+                                    "console"
                                     environment))))
 
 (defun rails-script:breakpointer ()
-  "Run script/rails breakpointer."
+  "Run breakpointer."
   (interactive)
-  (rails-script:run-interactive "breakpointer" "script/rails breakpointer"))
+  (rails-script:run-interactive "breakpointer" "breakpointer"))
 
 (provide 'rails-scripts)
 
