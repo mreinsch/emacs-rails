@@ -197,6 +197,7 @@ Emacs w3m browser."
     (:fixture          "test/fixtures/")
     (:lib              "lib")
     (:rspec-controller "spec/controllers")
+    (:rspec-controller "spec/requests")
     (:rspec-fixture    "spec/fixtures")
     (:rspec-lib        "spec/lib")
     (:rspec-model      "spec/models")
@@ -505,6 +506,8 @@ necessary."
                "\\|" (mapconcat (lambda (ext) (concat "\\." ext "$")) rails-refactoring-source-extensions "\\|")
                "\\|" (mapconcat (lambda (ext) (concat "\\." ext "$")) rails-grep-extensions "\\|")
                "\\)"))
+  (set (make-local-variable 'ffip-patterns)
+       (mapcar (lambda (ext) (concat "*." ext)) rails-grep-extensions))
   (rails-features:install))
 
 ;; hooks
